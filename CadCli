@@ -1,0 +1,59 @@
+Public fotopasta As String
+Public linha As Integer
+
+'Busca foto do cliente na pasta do pc
+Public Sub BuscaFoto()
+    fotopasta = Application.GetOpenFilename(FileFilter:="Image Files(*.jpg),*.jpg")
+    shtCadastro.Image1.Picture = LoadPicture(fotopasta)
+
+End Sub
+
+'Cancela Foto
+Public Sub CancelarFoto()
+    fotopasta = ThisWorkbook.Path & "\Fotos\" & "padrao.jpg"
+    shtCadastro.Image1.Picture = LoadPicture(fotopasta)
+    fotopasta = ""
+End Sub
+
+'Cadastro de Informação
+Public Sub Cadastrar()
+    Call EfeitoMenuAcao
+    linha = 11
+'1° Restrição - Codigo ou Nome estiver em Branco, Não Cadastrar.
+    If shtCadastro.Range("Cad_0") = "" Or shtCadastro.Range("Cad_1") = "" Then
+        MsgBox "Verifique se o Código ou o Nome estão preenchidos", vbInformation, "Cadastro Negado"
+    Exit Sub
+    End If
+    
+'2° Restreição - Se o Código já estiver Cadastrado, Não Cadastrar
+    Do Until shtdados.Cells(linha, "A") = ""
+        If shtdados.Cells(linha, "A") = shtCadastro.Range("Cad_0") Then
+            MsgBox "Este Código já está cadastrado!", vbInformation, "Cadastro Negado"
+        Exit Sub
+        End If
+        linha = linha + 1
+    Loop
+    
+'3° Restrição - Se o CPF estiver Cadastrado, Não Cadastrar
+    Do Until shtdados.Cells(linha, "E") = ""
+        If shtdados.Cells(linha, "E") = shtCadastro.Range("Cad_4") Then
+            MsgBox "CPF ja cadastrado!", vbInformation, "Cadastro Negado"
+        Exit Sub
+        End If
+        linha = linha + 1
+    Loop
+        
+
+'-------
+
+    Do Until shtdados.Cells(linha, "A") = ""
+    linha = linha + 1
+    Loop
+    
+    For a = 0 To 15
+    shtdados.Cells(linha, "A").Offset(0, a) = shtCadastro.Range("Cad_" & a).Value
+    Next
+    MsgBox "Dados Cadastrados com Sucesso! ", vbInformation, "Cadastro de Informações"
+    
+End Sub
+
